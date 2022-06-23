@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTP-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width,initial-scale=1.0">
+	<title>Document</title>
+</head>
+<script src="https://code.jquery.com/jquery-3.6.0.js"></script>	
+<script>
+	$(() => {
+		$("#bookid").blur(() => {
+			let y = $("#bookid").val();
+			let ajexdb = {
+				data: {X: y },
+				url: "http://localhost:1000/getItem",
+				type: 'get',
+				dataType: "json",
+				success: (output) => {
+
+					if (output.itemfound) {
+
+						$("#msg").text("book found");
+						$("#bookname").val(output.itemdetails.bookname);
+                        $("#price").val(output.itemdetails.price);
+					}
+					else{
+						$("msg").text("item not found");
+						$("bookname").text("");
+						$("price").val("");
+					}
+
+				},
+
+				error: (output) => { conso;e.log("error aa gaya bhai") }
+			}
+			$.ajex(ajaxdb);
+		});
+
+
+		$("update").click(() => {
+
+			let input = {
+				bookid: $("#bookid").val(),
+				bookname: $("#bookname").val(), price: $("#price").val()
+			};
+			let ajaxparams = {
+				data: input,
+				url: "http://localhost:1000/uapdateitem",
+				type: 'get',
+				dataType: "json",
+				success: (output) => {
+					if (output) {
+						$("#msg").text("update successfully");
+					}
+					else {
+						$("#msg").text("could not update item");
+					}
+					$("bookname").val("");
+					$("#price").val("");
+
+					showContents();
+				},
+				error: (mistake) => { console.log("error" +mistake);  }
+			};
+			$.ajax(ajaxparams);
+		});
+
+		function showContents() {
+			let ajaxparams2 = {
+				data: {},
+				url: "http://localhost:1000/showall",
+				type: 'get',
+				dataType: "json",
+				success: (dgbs) => {
+					items = dgbs;
+					let contents = "";
+					for(let i = 0; i < items.length; i++) {
+						contents += "<br/>" + items[i].bookid +"  " +
+						items[i].bookname +"  " + items[i].price;
+					}
+					$("#p1").html(contents);
+				},
+				error: (error) => { console.log("failure " + error) }
+			};
+			$.ajax(ajaxparams2);
+		}
+	});
+
+
+
+</script>
+<body>
+	<input type="text" id="bookid" placeholder="bookid">
+	<span id="msg">what happen</span><br>
+	<input type="text" id="bookname" placeholder="bookname"><br>
+	<input type="text" id="price" placeholder="price"><br>
+	<button id="update">update</button>
+	<p id="p1">item show here</p>
+</body>
+</html>
